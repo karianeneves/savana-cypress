@@ -1,20 +1,20 @@
-import { usuario } from "../support/dados";
+import LoginPage from "../support/pages/LoginPage";
+import GerenciamentoPage from "../support/pages/GerenciamentoPage";
 
 describe("Autenticação", () => {
   before(() => cy.garantirUsuario());
 
   it("CT02 - login com senha incorreta", () => {
-    const alerta = cy.stub().as("alerta");
-    cy.on("window:alert", alerta);
+    cy.fixture("usuarios").then(({ valido, senhaIncorreta }) => {
+      cy.espiarAlerta();
 
-    cy.visit("/login");
-    cy.dc("login-email").type(usuario.email);
-    cy.dc("login-senha").type("senhaerrada1", { log: false });
-    cy.dc("login-submit").click();
+      LoginPage.visitar();
+      LoginPage.logar({ email: valido.email, senha: senhaIncorreta });
 
-    cy.get("@alerta").should("have.been.called");
-    cy.url().should("include", "/login");
-    cy.dc("login-form").should("be.visible");
-    cy.dc("btn-logout").should("not.exist");
+      cy.get("@alerta").should("have.been.called");
+      cy.url().should("include", "/login");
+      LoginPage.elements.form().should("be.visible");
+      GerenciamentoPage.elements.logout().should("not.exist");
+    });
   });
 });

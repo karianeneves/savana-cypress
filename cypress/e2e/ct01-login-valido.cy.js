@@ -1,16 +1,17 @@
-import { usuario } from "../support/dados";
+import LoginPage from "../support/pages/LoginPage";
+import GerenciamentoPage from "../support/pages/GerenciamentoPage";
 
 describe("Autenticação", () => {
   before(() => cy.garantirUsuario());
 
   it("CT01 - login com credenciais válidas", () => {
-    cy.visit("/login");
-    cy.dc("login-email").type(usuario.email);
-    cy.dc("login-senha").type(usuario.senha, { log: false });
-    cy.dc("login-submit").click();
+    cy.fixture("usuarios").then(({ valido }) => {
+      LoginPage.visitar();
+      LoginPage.logar(valido);
 
-    cy.url().should("include", "/gerenciamento");
-    cy.dc("gerenciamento").should("be.visible");
-    cy.dc("btn-logout").should("be.visible");
+      cy.url().should("include", "/gerenciamento");
+      GerenciamentoPage.elements.painel().should("be.visible");
+      GerenciamentoPage.elements.logout().should("be.visible");
+    });
   });
 });
