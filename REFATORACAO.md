@@ -28,8 +28,8 @@ Esperas fixas: a suíte da A1 **não tinha `cy.wait(<ms>)`** (conferido com `gre
 - Falha (CT07): `POST /auth/login` stubado com status 401; o app mostra o alerta "Email ou senha inválidos", continua em `/login` e não grava token.
 
 ## Evidência de estabilidade
-Rodar 3 vezes seguidas, com backend (3000) e frontend (3001) no ar:
-```
-for i in 1 2 3; do npx cypress run || break; done
-```
-Anexar o print em `evidencias/` (ex.: `evidencias/refatoracao-3-execucoes.png`).
+Suíte rodada 3 vezes seguidas (`npx cypress run`), todas com 7/7 testes passando:
+
+![Execução 1](evidencias/refatoracao-execucao-1.png)
+![Execução 2](evidencias/refatoracao-execucao-2.png)
+![Execução 3](evidencias/refatoracao-execucao-3.png)
