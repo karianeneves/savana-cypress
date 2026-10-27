@@ -1,3 +1,6 @@
+import CadastroAnimalPage from "../support/pages/CadastroAnimalPage";
+import AdocaoPage from "../support/pages/AdocaoPage";
+
 describe("Animais", () => {
   beforeEach(() => {
     cy.garantirUsuario();
@@ -5,21 +8,23 @@ describe("Animais", () => {
   });
 
   it("CT04 - cadastrar um animal e vê-lo na adoção", () => {
-    const nome = `Rex ${Date.now()}`;
-    const alerta = cy.stub().as("alerta");
-    cy.on("window:alert", alerta);
+    cy.fixture("animal").then((animal) => {
+      cy.fixture("mensagens").then((msg) => {
+        cy.nomeUnico(animal.nome).then((nome) => {
+          cy.espiarAlerta();
+          // Espia (sem stub) a chamada real: espera pela requisição, não por tempo
+          cy.intercept("POST", `${Cypress.env("apiUrl")}/pets`).as("criarPet");
 
-    cy.visit("/cadastro/animal");
-    cy.dc("animal-nome").type(nome);
-    cy.dc("animal-especie").type("Cachorro");
-    cy.dc("animal-sexo").type("Macho");
-    cy.dc("animal-idade").type("3");
-    cy.dc("animal-raca").type("SRD");
-    cy.dc("animal-historia").type("Resgatado e muito dócil com crianças.");
-    cy.dc("animal-submit").click();
+          CadastroAnimalPage.visitar();
+          CadastroAnimalPage.preencher({ ...animal, nome });
+          CadastroAnimalPage.enviar();
 
-    cy.get("@alerta").should("have.been.calledWith", "Animal cadastrado com sucesso!");
-    cy.url().should("include", "/adocao");
-    cy.contains('[data-cy="pet-item"]', nome).should("be.visible");
+          cy.wait("@criarPet").its("response.statusCode").should("be.oneOf", [200, 201]);
+          cy.get("@alerta").should("have.been.calledWith", msg.animalCadastrado);
+          cy.url().should("include", "/adocao");
+          AdocaoPage.elements.itemComNome(nome).should("be.visible");
+        });
+      });
+    });
   });
 });
