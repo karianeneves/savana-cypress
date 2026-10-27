@@ -1,0 +1,4 @@
+[
+  { "id": 1, "name": "Thor", "species": "Cachorro", "age": 2, "breed": "Labrador", "description": "Brincalhão." },
+  { "id": 2, "name": "Mia", "species": "Gato", "age": 4, "breed": "SRD", "description": "Calma e carinhosa." }
+]

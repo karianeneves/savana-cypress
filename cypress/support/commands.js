@@ -1,30 +1,38 @@
-import { apiUrl, usuario } from "./dados";
+import LoginPage from "./pages/LoginPage";
 
-// Seletor exclusivo por data-cy
-Cypress.Commands.add("dc", (nome) => cy.get(`[data-cy="${nome}"]`));
-
-// Garante que o usuário de teste existe (se já existir, ignora o erro)
+// 1) Garante que o usuário de teste existe (se já existir, ignora o erro)
 Cypress.Commands.add("garantirUsuario", () => {
-  cy.request({
-    method: "POST",
-    url: `${apiUrl}/users`,
-    body: {
-      name: usuario.nome,
-      cpf: usuario.cpf,
-      email: usuario.email,
-      password: usuario.senha,
-    },
-    failOnStatusCode: false,
+  cy.fixture("usuarios").then(({ valido }) => {
+    cy.request({
+      method: "POST",
+      url: `${Cypress.env("apiUrl")}/users`,
+      body: {
+        name: valido.nome,
+        cpf: valido.cpf,
+        email: valido.email,
+        password: valido.senha,
+      },
+      failOnStatusCode: false,
+    });
   });
 });
 
-// Login pela interface, guardado em sessão para não repetir em todo teste
+// 2) Login pela interface, guardado em sessão para não repetir em todo teste
 Cypress.Commands.add("login", () => {
-  cy.session(usuario.email, () => {
-    cy.visit("/login");
-    cy.dc("login-email").type(usuario.email);
-    cy.dc("login-senha").type(usuario.senha, { log: false });
-    cy.dc("login-submit").click();
-    cy.url().should("include", "/gerenciamento");
+  cy.fixture("usuarios").then(({ valido }) => {
+    cy.session(valido.email, () => {
+      LoginPage.visitar();
+      LoginPage.logar(valido);
+      cy.url().should("include", "/gerenciamento");
+    });
   });
 });
+
+// 3) Espia os window.alert da aplicação (alias @alerta)
+Cypress.Commands.add("espiarAlerta", () => {
+  const alerta = cy.stub().as("alerta");
+  cy.on("window:alert", alerta);
+});
+
+// Nome único para não colidir com dados criados em execuções anteriores
+Cypress.Commands.add("nomeUnico", (base) => `${base} ${Date.now()}`);

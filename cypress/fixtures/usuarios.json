@@ -1,0 +1,9 @@
+{
+  "valido": {
+    "nome": "Usuario Cypress",
+    "cpf": "12345678901",
+    "email": "cypress@savana.com",
+    "senha": "cypress123"
+  },
+  "senhaIncorreta": "senhaerrada1"
+}
