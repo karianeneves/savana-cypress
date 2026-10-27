@@ -1,11 +1,12 @@
 import LoginPage from "../support/pages/LoginPage";
 import AdocaoPage from "../support/pages/AdocaoPage";
+import { apiUrl } from "../support/api";
 
 const CORS = { "access-control-allow-origin": "http://localhost:3001" };
 
 describe("Cenários com stub de API (sem depender do backend real)", () => {
   it("CT06 - [sucesso] adoção lista os pets devolvidos pela API stubada", () => {
-    cy.intercept("GET", `${Cypress.env("apiUrl")}/pets`, {
+    cy.intercept("GET", `${apiUrl}/pets`, {
       fixture: "pets-lista.json",
       headers: CORS,
     }).as("listarPets");
@@ -22,7 +23,7 @@ describe("Cenários com stub de API (sem depender do backend real)", () => {
     cy.fixture("usuarios").then(({ valido }) => {
       cy.fixture("mensagens").then((msg) => {
         cy.espiarAlerta();
-        cy.intercept("POST", `${Cypress.env("apiUrl")}/auth/login`, {
+        cy.intercept("POST", `${apiUrl}/auth/login`, {
           statusCode: 401,
           body: { message: "Unauthorized" },
           headers: CORS,

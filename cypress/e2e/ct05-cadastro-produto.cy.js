@@ -1,5 +1,6 @@
 import CadastroProdutoPage from "../support/pages/CadastroProdutoPage";
 import CardapioPage from "../support/pages/CardapioPage";
+import { apiUrl } from "../support/api";
 
 describe("Cardápio", () => {
   beforeEach(() => {
@@ -12,7 +13,7 @@ describe("Cardápio", () => {
       cy.fixture("mensagens").then((msg) => {
         cy.nomeUnico(produto.nome).then((nome) => {
           cy.espiarAlerta();
-          cy.intercept("POST", `${Cypress.env("apiUrl")}/menu`).as("criarItem");
+          cy.intercept("POST", `${apiUrl}/menu`).as("criarItem");
 
           CadastroProdutoPage.visitar();
           CadastroProdutoPage.preencher({ ...produto, nome });

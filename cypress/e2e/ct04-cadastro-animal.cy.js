@@ -1,5 +1,6 @@
 import CadastroAnimalPage from "../support/pages/CadastroAnimalPage";
 import AdocaoPage from "../support/pages/AdocaoPage";
+import { apiUrl } from "../support/api";
 
 describe("Animais", () => {
   beforeEach(() => {
@@ -13,7 +14,7 @@ describe("Animais", () => {
         cy.nomeUnico(animal.nome).then((nome) => {
           cy.espiarAlerta();
           // Espia (sem stub) a chamada real: espera pela requisição, não por tempo
-          cy.intercept("POST", `${Cypress.env("apiUrl")}/pets`).as("criarPet");
+          cy.intercept("POST", `${apiUrl}/pets`).as("criarPet");
 
           CadastroAnimalPage.visitar();
           CadastroAnimalPage.preencher({ ...animal, nome });

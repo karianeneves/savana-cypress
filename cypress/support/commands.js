@@ -1,11 +1,12 @@
 import LoginPage from "./pages/LoginPage";
+import { apiUrl } from "./api";
 
 // 1) Garante que o usuário de teste existe (se já existir, ignora o erro)
 Cypress.Commands.add("garantirUsuario", () => {
   cy.fixture("usuarios").then(({ valido }) => {
     cy.request({
       method: "POST",
-      url: `${Cypress.env("apiUrl")}/users`,
+      url: `${apiUrl}/users`,
       body: {
         name: valido.nome,
         cpf: valido.cpf,
